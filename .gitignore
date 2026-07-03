@@ -8,6 +8,8 @@ dist/
 dist-ssr/
 build/
 *.local
+.granite/
+*.ait
 
 # Environment files
 .env
