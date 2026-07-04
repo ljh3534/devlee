@@ -1,5 +1,6 @@
 import { colors } from "@toss/tds-colors";
 import {
+  Asset,
   Button,
   List,
   ListRow,
@@ -118,34 +119,25 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
         }
       />
 
-      <div style={{ display: "flex", gap: "8px", padding: "0 24px 16px" }}>
+      <div style={{ padding: "0 24px 16px", textAlign: "center" }}>
+        <Asset.Image
+          alt={`성장 단계 Lv.${stage.level} ${stage.label}`}
+          frameShape={{ width: 120 }}
+          backgroundColor="transparent"
+          src={`${import.meta.env.BASE_URL}${stage.image}`}
+        />
         <div
           style={{
-            flex: 1,
-            padding: "12px",
-            borderRadius: "12px",
-            backgroundColor: colors.grey100,
-            textAlign: "center",
+            fontSize: "16px",
+            fontWeight: "bold",
+            color: colors.grey800,
+            marginTop: "8px",
           }}
         >
-          <div style={{ fontSize: "13px", color: colors.grey600 }}>연속 기록</div>
-          <div style={{ fontSize: "18px", fontWeight: "bold", color: colors.grey800 }}>
-            {streak}일
-          </div>
+          Lv.{stage.level} {stage.label}
         </div>
-        <div
-          style={{
-            flex: 1,
-            padding: "12px",
-            borderRadius: "12px",
-            backgroundColor: colors.grey100,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ fontSize: "13px", color: colors.grey600 }}>성장 단계</div>
-          <div style={{ fontSize: "18px", fontWeight: "bold", color: colors.grey800 }}>
-            Lv.{stage.level} {stage.label}
-          </div>
+        <div style={{ fontSize: "13px", color: colors.grey600, marginTop: "2px" }}>
+          연속 기록 {streak}일
         </div>
       </div>
 

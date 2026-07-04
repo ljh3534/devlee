@@ -4,14 +4,14 @@ export interface GrowthStage {
   level: number;
   label: string;
   minEntries: number;
+  image: string;
 }
 
-// TODO: 실제 캐릭터 일러스트가 생기면 label 대신 이미지 에셋으로 교체
 const GROWTH_STAGES: GrowthStage[] = [
-  { level: 1, label: "씨앗", minEntries: 0 },
-  { level: 2, label: "새싹", minEntries: 3 },
-  { level: 3, label: "나무", minEntries: 7 },
-  { level: 4, label: "열매", minEntries: 14 },
+  { level: 1, label: "씨앗", minEntries: 0, image: "Level1.png" },
+  { level: 2, label: "새싹", minEntries: 3, image: "Level2.png" },
+  { level: 3, label: "나무", minEntries: 7, image: "Level3.png" },
+  { level: 4, label: "열매", minEntries: 14, image: "Level4.png" },
 ];
 
 interface UseMealGrowthReturn {
