@@ -10,10 +10,13 @@ import {
 } from "@toss/tds-mobile";
 import { useCallback } from "react";
 
+import { useMealGrowth } from "../hooks/useMealGrowth";
 import { useMealLog } from "../hooks/useMealLog";
 import { useMealMemoPrompt } from "../hooks/useMealMemoPrompt";
+import { useMealMission } from "../hooks/useMealMission";
 import { useMealNudge } from "../hooks/useMealNudge";
 import { useMealPhotoCapture } from "../hooks/useMealPhotoCapture";
+import { useMealStreak } from "../hooks/useMealStreak";
 
 const MEAL_COMMENTS = [
   "오늘도 기록 완료! 잘 먹었어요.",
@@ -43,6 +46,9 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   const { entries, isLoading, addEntry, updateEntry, removeEntry } = useMealLog();
   const { capture, pickFromAlbum, isCapturing } = useMealPhotoCapture();
   const { promptMemo } = useMealMemoPrompt();
+  const { mission, toggleComplete } = useMealMission();
+  const streak = useMealStreak(entries);
+  const { stage } = useMealGrowth(entries.length);
   const dialog = useDialog();
   const toast = useToast();
 
@@ -111,6 +117,70 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
           </Top.SubtitleParagraph>
         }
       />
+
+      <div style={{ display: "flex", gap: "8px", padding: "0 24px 16px" }}>
+        <div
+          style={{
+            flex: 1,
+            padding: "12px",
+            borderRadius: "12px",
+            backgroundColor: colors.grey100,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ fontSize: "13px", color: colors.grey600 }}>연속 기록</div>
+          <div style={{ fontSize: "18px", fontWeight: "bold", color: colors.grey800 }}>
+            {streak}일
+          </div>
+        </div>
+        <div
+          style={{
+            flex: 1,
+            padding: "12px",
+            borderRadius: "12px",
+            backgroundColor: colors.grey100,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ fontSize: "13px", color: colors.grey600 }}>성장 단계</div>
+          <div style={{ fontSize: "18px", fontWeight: "bold", color: colors.grey800 }}>
+            Lv.{stage.level} {stage.label}
+          </div>
+        </div>
+      </div>
+
+      {mission && (
+        <div
+          style={{
+            margin: "0 24px 16px",
+            padding: "16px",
+            borderRadius: "12px",
+            border: `1px solid ${colors.grey200}`,
+          }}
+        >
+          <div style={{ fontSize: "13px", color: colors.grey600, marginBottom: "4px" }}>
+            오늘의 미션
+          </div>
+          <div
+            style={{
+              fontSize: "15px",
+              color: colors.grey800,
+              marginBottom: "12px",
+              textDecoration: mission.completed ? "line-through" : "none",
+            }}
+          >
+            {mission.text}
+          </div>
+          <Button
+            size="small"
+            variant={mission.completed ? "weak" : "fill"}
+            color="dark"
+            onClick={toggleComplete}
+          >
+            {mission.completed ? "완료 취소하기" : "완료했어요"}
+          </Button>
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: "8px", padding: "0 24px 16px" }}>
         <Button
