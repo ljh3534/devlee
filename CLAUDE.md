@@ -25,7 +25,7 @@
 
 - `src/App.tsx` — 진입 컴포넌트. 라우터 없이 `useState`로 페이지 전환(`page` 상태값에 따라 조건부 렌더링)
 - `src/pages/` — 화면 단위 컴포넌트. `onBack` prop으로 이전 화면 복귀 처리
-- `src/hooks/` — 기능별 로직(광고, 인앱결제 등)을 커스텀 훅으로 분리. 앱인토스 SDK 호출은 훅 안에 캡슐화
+- `src/hooks/` — 기능별 로직(식단 기록, 랭킹 등)을 커스텀 훅으로 분리. 앱인토스 SDK 호출은 훅 안에 캡슐화
 - `granite.config.ts` — 앱 이름/브랜드 색상/권한 등 미니앱 설정. `brand.icon`은 로컬 dev 서버 주소(`http://<IP>:5173/파일명`) 기준이라 IP가 바뀌거나 실제 배포할 때 다시 갱신 필요. 다크모드 아이콘은 코드가 아니라 앱인토스 콘솔에서 별도 업로드
 - `docs/skills/apps-in-toss.md`, `docs/skills/tds-mobile.md` — 앱인토스 API·TDS 컴포넌트 전체 레퍼런스. 분량이 커서 상시 로드하지 않음. 특정 API/컴포넌트 사용법이 필요할 때만 열어서 확인할 것
 
@@ -64,14 +64,14 @@
 계획했던 핵심 기능(사진기록/넛지/스트릭/성장캐릭터/미션/기기간동기화/소셜·랭킹/AI성분분석)은 전부 구현 및 검증 완료(샌드박스 앱 실기기 확인 포함). 남은 건:
 
 - **디자인/UX 다듬기** — 기능·테스트가 다 끝난 뒤에 하기로 미리 정해뒀던 작업. 이제 시작해도 되는 타이밍
-- **인앱광고/인앱결제/토스 로그인** — 사업자 등록증이 필요한데 사업자 등록 계획이 없어서 사실상 안 쓸 기능. `InAppAdsPage.tsx`/`InAppPurchasePage.tsx`는 Granite 시작 템플릿이 남긴 데모/보일러플레이트 상태 그대로 방치 중
+- **인앱광고/인앱결제/토스 로그인** — 사업자 등록증이 필요한데 사업자 등록 계획이 없어서 사실상 안 쓸 기능. Granite 시작 템플릿이 남긴 `InAppAdsPage.tsx`/`InAppPurchasePage.tsx`와 관련 훅(`useInAppAds.tsx`/`useInAppPurchase.ts`), 홈 화면 진입 버튼은 삭제함
 - **수익화** — 위 항목들이 막혀 있어서 같이 보류 상태
 
 ## 컨벤션
 
 - UI는 `@toss/tds-mobile`(TDS) 컴포넌트를 사용. 색상은 `@toss/tds-colors`의 `colors`/`adaptive` 사용
 - 앱인토스 SDK(`@apps-in-toss/web-framework`) 기능은 페이지에서 직접 부르지 않고 `src/hooks`의 커스텀 훅으로 감싸서 사용
-- 테스트용 광고그룹 ID처럼 실제 배포 전 교체가 필요한 값은 `TODO` 주석으로 표시되어 있음 (예: `InAppAdsPage.tsx`)
+- 실제 배포 전 교체가 필요한 값은 `TODO` 주석으로 표시할 것
 
 ## 협업 규칙
 
