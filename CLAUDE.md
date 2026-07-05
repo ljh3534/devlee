@@ -31,18 +31,28 @@
 
 ## 핵심 기능 — 식단 기록 (`src/pages/MealLogPage.tsx`)
 
-- **사진 기록**: 카메라 촬영 또는 앨범 선택(`useMealPhotoCapture`)으로 식단 사진을 남기고, 메모 입력(`useMealMemoPrompt`, 비워두면 랜덤 코멘트 자동 적용). 기록은 `useMealLog`가 `Storage`(기기 로컬 저장소)에만 저장 — **서버 없음, 기기 간 동기화 안 됨**
+- **사진 기록**: 카메라 촬영 또는 앨범 선택(`useMealPhotoCapture`)으로 식단 사진을 남기고, 메모 입력(`useMealMemoPrompt`, 비워두면 랜덤 코멘트 자동 적용). 기록은 `useMealLog`가 `Storage`(기기 로컬 저장소)에 저장 — 현재는 로컬 전용이며, `whatimeat-server` 연동 후 서버 동기화로 전환 예정(아래 "백엔드" 섹션 참고)
 - **넛지 팝업**(`useMealNudge`): 페이지가 열려있는 동안 랜덤 간격(45~90초)으로 "혹시 뭐 먹고 있는 거 아니지?" 팝업을 띄워 기록을 유도. 앱을 나가있거나 꺼놨을 때 오는 백그라운드 푸시는 아님
 - **연속 기록 스트릭**(`useMealStreak`): 기록 날짜 기준으로 오늘부터 거슬러 연속 기록일수 계산
 - **성장 단계 캐릭터**(`useMealGrowth`): 총 기록 개수로 Lv.1(씨앗)~Lv.4(열매) 단계 결정, `public/Level1~4.png` 일러스트로 표시
 - **오늘의 미션**(`useMealMission`): 날짜별로 랜덤 미션 문구 하나를 로컬에 저장, "완료했어요" 버튼은 자기신고 방식(실제 이행 여부 검증 불가)
 
+## 백엔드 (`whatimeat-server`, 별도 레포)
+
+- 위치: `https://github.com/ljh3534/whatimeat-server` (devlee와 별도 레포 — devlee는 `ait deploy`, 서버는 레일웨이로 배포 방식이 근본적으로 달라서 분리함)
+- 스택: Python + FastAPI + SQLAlchemy + Postgres(레일웨이 애드온), 마이그레이션은 Alembic
+- **토스 로그인은 사용하지 않음** — 인앱결제/인앱광고/토스 로그인 전부 사업자 등록증이 필요해서 당분간 제외하기로 함
+- 인증 대신 **익명 코드 시스템** 사용: `POST /api/auth/register`(가입+토큰 발급), `POST /api/auth/link`(다른 기기에서 sync_code로 연결), `GET /api/auth/me`. 모든 요청은 `Authorization: Bearer <access_token>` 헤더 필요
+- 레일웨이 배포 완료, `/health` 정상 확인됨. `DATABASE_URL`은 레일웨이가 `postgresql://` 형태로 주는데, SQLAlchemy 기본 드라이버(psycopg2, 미설치)가 아니라 psycopg3를 쓰도록 `app/database.py`의 `normalize_database_url`에서 `postgresql+psycopg://`로 강제 변환함 (이 변환 없으면 배포 시 크래시)
+- 로컬 개발 시 `DATABASE_URL` 없으면 SQLite로 자동 폴백
+
 ## 남은 기능 / 알려진 제약
 
-- **AI 성분분석/칼로리 인식** — 미구현. 백엔드(서버리스 함수 등) 없이는 API 키를 안전하게 다룰 수 없어서 서버 도입이 선행되어야 함
-- **소셜/공유, 기기 간 동기화** — 미구현. 둘 다 서버 필요
-- **인앱광고/인앱결제**(`InAppAdsPage.tsx` 등) — 테스트용 ID만 있는 상태, 배포 전 실제 ID로 교체 필요 (`TODO` 주석 참고)
-- **수익화** — 리워드형 광고를 미션/기록 보상과 연동하는 방향으로 논의만 되고 코드는 미착수
+- **기기 간 동기화** — 백엔드 인증 시스템은 구축됨, `MealEntry` 동기화 API(CRUD)와 devlee 프론트 `useMealLog` 연동은 아직 미구현
+- **소셜/경쟁(랭킹)** — 로그인 없이 익명 ID + 자율 닉네임 기반 랭킹 + 친구 코드 공유 방식으로 설계하기로 함, 미구현
+- **AI 성분분석/칼로리 인식** — 미구현. 백엔드는 준비됐으니 사진 업로드 → Vision AI API 호출 엔드포인트 추가하면 됨
+- **인앱광고/인앱결제/토스 로그인** — 사업자 등록증 필요로 당분간 보류. `InAppAdsPage.tsx` 등에 테스트용 ID만 있는 상태
+- **수익화** — 사업자 등록 이후로 보류
 
 ## 컨벤션
 
