@@ -32,6 +32,7 @@
 ## 핵심 기능 — 식단 기록 (`src/pages/MealLogPage.tsx`)
 
 - **사진 기록**: 카메라 촬영 또는 앨범 선택(`useMealPhotoCapture`)으로 식단 사진을 남기고, 메모 입력(`useMealMemoPrompt`, 비워두면 랜덤 코멘트 자동 적용). 기록은 `useMealLog`가 `whatimeat-server`의 `/api/meals`와 동기화됨 (아래 "백엔드" 섹션 참고)
+- **AI 성분분석**(`useMealAnalysis`): 사진 촬영/선택 직후 `whatimeat-server`가 Claude Vision으로 분석한 코멘트(메뉴+대략적 칼로리)를 메모 입력창에 미리 채워줌. 사용자가 그대로 쓰거나 수정 가능, 분석 실패 시 빈 칸(랜덤 코멘트 대체)으로 자연스럽게 폴백
 - **기기 인증**(`useDeviceAuth`): 앱 최초 실행 시 자동으로 서버에 익명 계정을 만들고 `access_token`/`sync_code`를 로컬에 저장. "내 동기화 코드 보기"/"다른 기기 연결하기" 버튼으로 다른 기기와 데이터 연결 가능 (`useSyncCodePrompt`)
 - **넛지 팝업**(`useMealNudge`): 페이지가 열려있는 동안 랜덤 간격(45~90초)으로 "혹시 뭐 먹고 있는 거 아니지?" 팝업을 띄워 기록을 유도. 앱을 나가있거나 꺼놨을 때 오는 백그라운드 푸시는 아님
 - **연속 기록 스트릭**(`useMealStreak`): 기록 날짜 기준으로 오늘부터 거슬러 연속 기록일수 계산
@@ -54,13 +55,15 @@
 - 로컬 개발 시 `DATABASE_URL` 없으면 SQLite로 자동 폴백
 - `MealEntry` 동기화 API: `GET/POST /api/meals`, `PATCH`·`DELETE /api/meals/{id}` — 전부 인증 필요, 본인 소유 기록만 접근 가능
 - 랭킹/친구 API: `PATCH /api/auth/me`(닉네임 설정), `GET /api/leaderboard`(닉네임 설정자만 노출, 누적 기록 수 기준), `GET /api/leaderboard/me`(내 순위), `POST`·`GET /api/friends`(동기화 코드로 친구 추가, 양방향)
+- AI 분석 API: `POST /api/meals/analyze` (`app/ai.py`) — Claude Vision(기본 모델 Haiku, `CLAUDE_MODEL`로 변경 가능)으로 사진 분석. `ANTHROPIC_API_KEY` 환경변수 필요(로컬은 `.env`, 레일웨이는 대시보드에 별도 설정). 호출마다 비용 발생하므로 사용량 늘면 제한 로직 고려
+- `python-dotenv`가 `requirements.txt`엔 있었지만 실제 `load_dotenv()` 호출이 빠져있던 걸 발견해 `app/main.py`, `alembic/env.py`에 추가함 (로컬 `.env` 파일이 이제 정상적으로 반영됨)
 - devlee 프론트의 공개 주소는 `src/config.ts`의 `API_BASE_URL`에 하드코딩되어 있음. 레일웨이 도메인이 바뀌면 여기도 같이 갱신 필요
 
 ## 남은 기능 / 알려진 제약
 
 - **기기 간 동기화** — 완료. 실제 배포된 서버와 프론트 연동까지 확인함(register/meals API 정상 호출 확인)
 - **소셜/경쟁(랭킹)** — 완료. 닉네임 옵트인 랭킹 + 친구 비교까지 실제 배포 서버 상대로 연동 확인함
-- **AI 성분분석/칼로리 인식** — 미구현. 백엔드는 준비됐으니 사진 업로드 → Vision AI API 호출 엔드포인트 추가하면 됨
+- **AI 성분분석/칼로리 인식** — 완료. 백엔드 API 호출은 실제 Anthropic API로 검증함. 프론트 UI 흐름(촬영→분석→메모창 자동 채우기)은 브라우저에서 촬영 자체가 안 돼 검증 불가 — 샌드박스 앱에서 확인 필요
 - **인앱광고/인앱결제/토스 로그인** — 사업자 등록증 필요로 당분간 보류. `InAppAdsPage.tsx` 등에 테스트용 ID만 있는 상태
 - **수익화** — 사업자 등록 이후로 보류
 

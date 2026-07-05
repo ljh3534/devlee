@@ -12,6 +12,7 @@ import {
 import { useCallback } from "react";
 
 import { useDeviceAuth } from "../hooks/useDeviceAuth";
+import { useMealAnalysis } from "../hooks/useMealAnalysis";
 import { useMealGrowth } from "../hooks/useMealGrowth";
 import { useMealLog } from "../hooks/useMealLog";
 import { useMealMemoPrompt } from "../hooks/useMealMemoPrompt";
@@ -49,6 +50,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   const { accessToken, syncCode, linkWithCode } = useDeviceAuth();
   const { entries, isLoading, addEntry, updateEntry, removeEntry } = useMealLog(accessToken);
   const { capture, pickFromAlbum, isCapturing } = useMealPhotoCapture();
+  const { analyzePhoto } = useMealAnalysis(accessToken);
   const { promptMemo } = useMealMemoPrompt();
   const { promptSyncCode } = useSyncCodePrompt();
   const { mission, toggleComplete } = useMealMission();
@@ -63,7 +65,10 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
         return;
       }
 
-      const memo = await promptMemo("");
+      toast.openToast("AI가 사진을 분석하고 있어요...");
+      const analyzed = await analyzePhoto(photo.dataUri);
+
+      const memo = await promptMemo(analyzed ?? "");
       if (memo === null) {
         return;
       }
@@ -71,7 +76,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
       await addEntry(photo.dataUri, memo || pickRandomComment());
       toast.openToast("오늘의 한 끼가 기록됐어요!");
     },
-    [promptMemo, addEntry, toast],
+    [analyzePhoto, promptMemo, addEntry, toast],
   );
 
   const handleCapture = useCallback(async () => {
