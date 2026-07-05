@@ -31,7 +31,8 @@
 
 ## 핵심 기능 — 식단 기록 (`src/pages/MealLogPage.tsx`)
 
-- **사진 기록**: 카메라 촬영 또는 앨범 선택(`useMealPhotoCapture`)으로 식단 사진을 남기고, 메모 입력(`useMealMemoPrompt`, 비워두면 랜덤 코멘트 자동 적용). 기록은 `useMealLog`가 `Storage`(기기 로컬 저장소)에 저장 — 현재는 로컬 전용이며, `whatimeat-server` 연동 후 서버 동기화로 전환 예정(아래 "백엔드" 섹션 참고)
+- **사진 기록**: 카메라 촬영 또는 앨범 선택(`useMealPhotoCapture`)으로 식단 사진을 남기고, 메모 입력(`useMealMemoPrompt`, 비워두면 랜덤 코멘트 자동 적용). 기록은 `useMealLog`가 `whatimeat-server`의 `/api/meals`와 동기화됨 (아래 "백엔드" 섹션 참고)
+- **기기 인증**(`useDeviceAuth`): 앱 최초 실행 시 자동으로 서버에 익명 계정을 만들고 `access_token`/`sync_code`를 로컬에 저장. "내 동기화 코드 보기"/"다른 기기 연결하기" 버튼으로 다른 기기와 데이터 연결 가능 (`useSyncCodePrompt`)
 - **넛지 팝업**(`useMealNudge`): 페이지가 열려있는 동안 랜덤 간격(45~90초)으로 "혹시 뭐 먹고 있는 거 아니지?" 팝업을 띄워 기록을 유도. 앱을 나가있거나 꺼놨을 때 오는 백그라운드 푸시는 아님
 - **연속 기록 스트릭**(`useMealStreak`): 기록 날짜 기준으로 오늘부터 거슬러 연속 기록일수 계산
 - **성장 단계 캐릭터**(`useMealGrowth`): 총 기록 개수로 Lv.1(씨앗)~Lv.4(열매) 단계 결정, `public/Level1~4.png` 일러스트로 표시
@@ -45,10 +46,12 @@
 - 인증 대신 **익명 코드 시스템** 사용: `POST /api/auth/register`(가입+토큰 발급), `POST /api/auth/link`(다른 기기에서 sync_code로 연결), `GET /api/auth/me`. 모든 요청은 `Authorization: Bearer <access_token>` 헤더 필요
 - 레일웨이 배포 완료, `/health` 정상 확인됨. `DATABASE_URL`은 레일웨이가 `postgresql://` 형태로 주는데, SQLAlchemy 기본 드라이버(psycopg2, 미설치)가 아니라 psycopg3를 쓰도록 `app/database.py`의 `normalize_database_url`에서 `postgresql+psycopg://`로 강제 변환함 (이 변환 없으면 배포 시 크래시)
 - 로컬 개발 시 `DATABASE_URL` 없으면 SQLite로 자동 폴백
+- `MealEntry` 동기화 API: `GET/POST /api/meals`, `PATCH`·`DELETE /api/meals/{id}` — 전부 인증 필요, 본인 소유 기록만 접근 가능
+- devlee 프론트의 공개 주소는 `src/config.ts`의 `API_BASE_URL`에 하드코딩되어 있음. 레일웨이 도메인이 바뀌면 여기도 같이 갱신 필요
 
 ## 남은 기능 / 알려진 제약
 
-- **기기 간 동기화** — 백엔드 인증 시스템은 구축됨, `MealEntry` 동기화 API(CRUD)와 devlee 프론트 `useMealLog` 연동은 아직 미구현
+- **기기 간 동기화** — 완료. 실제 배포된 서버와 프론트 연동까지 확인함(register/meals API 정상 호출 확인)
 - **소셜/경쟁(랭킹)** — 로그인 없이 익명 ID + 자율 닉네임 기반 랭킹 + 친구 코드 공유 방식으로 설계하기로 함, 미구현
 - **AI 성분분석/칼로리 인식** — 미구현. 백엔드는 준비됐으니 사진 업로드 → Vision AI API 호출 엔드포인트 추가하면 됨
 - **인앱광고/인앱결제/토스 로그인** — 사업자 등록증 필요로 당분간 보류. `InAppAdsPage.tsx` 등에 테스트용 ID만 있는 상태

@@ -11,6 +11,7 @@ import {
 } from "@toss/tds-mobile";
 import { useCallback } from "react";
 
+import { useDeviceAuth } from "../hooks/useDeviceAuth";
 import { useMealGrowth } from "../hooks/useMealGrowth";
 import { useMealLog } from "../hooks/useMealLog";
 import { useMealMemoPrompt } from "../hooks/useMealMemoPrompt";
@@ -18,6 +19,7 @@ import { useMealMission } from "../hooks/useMealMission";
 import { useMealNudge } from "../hooks/useMealNudge";
 import { useMealPhotoCapture } from "../hooks/useMealPhotoCapture";
 import { useMealStreak } from "../hooks/useMealStreak";
+import { useSyncCodePrompt } from "../hooks/useSyncCodePrompt";
 
 const MEAL_COMMENTS = [
   "오늘도 기록 완료! 잘 먹었어요.",
@@ -44,9 +46,11 @@ interface MealLogPageProps {
 }
 
 export function MealLogPage({ onBack }: MealLogPageProps) {
-  const { entries, isLoading, addEntry, updateEntry, removeEntry } = useMealLog();
+  const { accessToken, syncCode, linkWithCode } = useDeviceAuth();
+  const { entries, isLoading, addEntry, updateEntry, removeEntry } = useMealLog(accessToken);
   const { capture, pickFromAlbum, isCapturing } = useMealPhotoCapture();
   const { promptMemo } = useMealMemoPrompt();
+  const { promptSyncCode } = useSyncCodePrompt();
   const { mission, toggleComplete } = useMealMission();
   const streak = useMealStreak(entries);
   const { stage } = useMealGrowth(entries.length);
@@ -105,6 +109,29 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
     },
     [dialog, removeEntry],
   );
+
+  const handleShowSyncCode = useCallback(() => {
+    if (!syncCode) {
+      return;
+    }
+
+    dialog.openAlert({
+      title: "내 동기화 코드",
+      description: `${syncCode}\n\n다른 기기에서 이 코드를 입력하면 지금 기록을 그대로 이어서 쓸 수 있어요.`,
+    });
+  }, [dialog, syncCode]);
+
+  const handleLinkDevice = useCallback(async () => {
+    const code = await promptSyncCode();
+    if (!code) {
+      return;
+    }
+
+    const success = await linkWithCode(code);
+    toast.openToast(
+      success ? "연결됐어요! 기록을 불러올게요." : "코드를 다시 확인해주세요.",
+    );
+  }, [promptSyncCode, linkWithCode, toast]);
 
   useMealNudge({ enabled: true, onConfirm: handleCapture });
 
@@ -256,6 +283,22 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
           ))}
         </List>
       )}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "12px",
+          padding: "8px 24px 0",
+        }}
+      >
+        <TextButton size="small" color={colors.grey600} onClick={handleShowSyncCode}>
+          내 동기화 코드 보기
+        </TextButton>
+        <TextButton size="small" color={colors.grey600} onClick={handleLinkDevice}>
+          다른 기기 연결하기
+        </TextButton>
+      </div>
 
       <TextButton
         style={{ padding: "16px 24px" }}
