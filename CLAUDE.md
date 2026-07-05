@@ -49,7 +49,7 @@
 
 - 위치: `https://github.com/ljh3534/whatimeat-server` (devlee와 별도 레포 — devlee는 `ait deploy`, 서버는 레일웨이로 배포 방식이 근본적으로 달라서 분리함)
 - 스택: Python + FastAPI + SQLAlchemy + Postgres(레일웨이 애드온), 마이그레이션은 Alembic
-- **토스 로그인은 사용하지 않음** — 인앱결제/인앱광고/토스 로그인 전부 사업자 등록증이 필요해서 당분간 제외하기로 함
+- **토스 로그인은 사용하지 않음** — 인앱결제/인앱광고/토스 로그인 전부 사업자 등록증이 필요한데, 사업자 등록을 할 계획이 없어서 사실상 앞으로도 안 쓸 예정
 - 인증 대신 **익명 코드 시스템** 사용: `POST /api/auth/register`(가입+토큰 발급), `POST /api/auth/link`(다른 기기에서 sync_code로 연결), `GET /api/auth/me`. 모든 요청은 `Authorization: Bearer <access_token>` 헤더 필요
 - 레일웨이 배포 완료, `/health` 정상 확인됨. `DATABASE_URL`은 레일웨이가 `postgresql://` 형태로 주는데, SQLAlchemy 기본 드라이버(psycopg2, 미설치)가 아니라 psycopg3를 쓰도록 `app/database.py`의 `normalize_database_url`에서 `postgresql+psycopg://`로 강제 변환함 (이 변환 없으면 배포 시 크래시)
 - 로컬 개발 시 `DATABASE_URL` 없으면 SQLite로 자동 폴백
@@ -64,8 +64,8 @@
 계획했던 핵심 기능(사진기록/넛지/스트릭/성장캐릭터/미션/기기간동기화/소셜·랭킹/AI성분분석)은 전부 구현 및 검증 완료(샌드박스 앱 실기기 확인 포함). 남은 건:
 
 - **디자인/UX 다듬기** — 기능·테스트가 다 끝난 뒤에 하기로 미리 정해뒀던 작업. 이제 시작해도 되는 타이밍
-- **인앱광고/인앱결제/토스 로그인** — 사업자 등록증 필요로 당분간 보류. `InAppAdsPage.tsx` 등에 테스트용 ID만 있는 상태
-- **수익화** — 사업자 등록 이후로 보류
+- **인앱광고/인앱결제/토스 로그인** — 사업자 등록증이 필요한데 사업자 등록 계획이 없어서 사실상 안 쓸 기능. `InAppAdsPage.tsx`/`InAppPurchasePage.tsx`는 Granite 시작 템플릿이 남긴 데모/보일러플레이트 상태 그대로 방치 중
+- **수익화** — 위 항목들이 막혀 있어서 같이 보류 상태
 
 ## 컨벤션
 
