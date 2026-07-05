@@ -2,6 +2,7 @@ import { Asset, Button, Top } from "@toss/tds-mobile";
 import "./App.css";
 import { InAppPurchasePage } from "./pages/InAppPurchasePage";
 import { InAppAdsPage } from "./pages/InAppAdsPage";
+import { LeaderboardPage } from "./pages/LeaderboardPage";
 import { MealLogPage } from "./pages/MealLogPage";
 import { useState } from "react";
 
@@ -11,6 +12,7 @@ function App() {
   if (page === "iap") return <InAppPurchasePage onBack={() => setPage(null)} />;
   if (page === "iaa") return <InAppAdsPage onBack={() => setPage(null)} />;
   if (page === "meal") return <MealLogPage onBack={() => setPage(null)} />;
+  if (page === "leaderboard") return <LeaderboardPage onBack={() => setPage(null)} />;
 
   return (
     <>
@@ -51,6 +53,10 @@ function App() {
         </Button>
         <Button color="dark" variant="fill" onClick={() => setPage("meal")}>
           오늘 뭐 먹었는지 기록하기
+        </Button>
+
+        <Button color="dark" variant="weak" onClick={() => setPage("leaderboard")}>
+          랭킹/친구 보기
         </Button>
 
         <Button color="dark" variant="weak" onClick={() => setPage("iap")}>

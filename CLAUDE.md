@@ -38,6 +38,12 @@
 - **성장 단계 캐릭터**(`useMealGrowth`): 총 기록 개수로 Lv.1(씨앗)~Lv.4(열매) 단계 결정, `public/Level1~4.png` 일러스트로 표시
 - **오늘의 미션**(`useMealMission`): 날짜별로 랜덤 미션 문구 하나를 로컬에 저장, "완료했어요" 버튼은 자기신고 방식(실제 이행 여부 검증 불가)
 
+## 핵심 기능 — 랭킹/친구 (`src/pages/LeaderboardPage.tsx`)
+
+- **닉네임**(`useNickname`, `useNicknamePrompt`): 닉네임을 설정해야 글로벌 랭킹에 노출됨(옵트인). 설정 안 해도 내 순위 조회는 가능
+- **글로벌 랭킹**(`useLeaderboard`): 닉네임 설정한 사용자 중 누적 기록 개수 기준 상위 N명 + 내 순위
+- **친구 비교**(`useFriends`): 동기화 코드(`useSyncCodePrompt` 재사용)로 친구 추가, 양방향 관계. 친구 목록도 기록 개수 기준 정렬
+
 ## 백엔드 (`whatimeat-server`, 별도 레포)
 
 - 위치: `https://github.com/ljh3534/whatimeat-server` (devlee와 별도 레포 — devlee는 `ait deploy`, 서버는 레일웨이로 배포 방식이 근본적으로 달라서 분리함)
@@ -47,12 +53,13 @@
 - 레일웨이 배포 완료, `/health` 정상 확인됨. `DATABASE_URL`은 레일웨이가 `postgresql://` 형태로 주는데, SQLAlchemy 기본 드라이버(psycopg2, 미설치)가 아니라 psycopg3를 쓰도록 `app/database.py`의 `normalize_database_url`에서 `postgresql+psycopg://`로 강제 변환함 (이 변환 없으면 배포 시 크래시)
 - 로컬 개발 시 `DATABASE_URL` 없으면 SQLite로 자동 폴백
 - `MealEntry` 동기화 API: `GET/POST /api/meals`, `PATCH`·`DELETE /api/meals/{id}` — 전부 인증 필요, 본인 소유 기록만 접근 가능
+- 랭킹/친구 API: `PATCH /api/auth/me`(닉네임 설정), `GET /api/leaderboard`(닉네임 설정자만 노출, 누적 기록 수 기준), `GET /api/leaderboard/me`(내 순위), `POST`·`GET /api/friends`(동기화 코드로 친구 추가, 양방향)
 - devlee 프론트의 공개 주소는 `src/config.ts`의 `API_BASE_URL`에 하드코딩되어 있음. 레일웨이 도메인이 바뀌면 여기도 같이 갱신 필요
 
 ## 남은 기능 / 알려진 제약
 
 - **기기 간 동기화** — 완료. 실제 배포된 서버와 프론트 연동까지 확인함(register/meals API 정상 호출 확인)
-- **소셜/경쟁(랭킹)** — 로그인 없이 익명 ID + 자율 닉네임 기반 랭킹 + 친구 코드 공유 방식으로 설계하기로 함, 미구현
+- **소셜/경쟁(랭킹)** — 완료. 닉네임 옵트인 랭킹 + 친구 비교까지 실제 배포 서버 상대로 연동 확인함
 - **AI 성분분석/칼로리 인식** — 미구현. 백엔드는 준비됐으니 사진 업로드 → Vision AI API 호출 엔드포인트 추가하면 됨
 - **인앱광고/인앱결제/토스 로그인** — 사업자 등록증 필요로 당분간 보류. `InAppAdsPage.tsx` 등에 테스트용 ID만 있는 상태
 - **수익화** — 사업자 등록 이후로 보류

@@ -2,30 +2,26 @@ import { colors } from "@toss/tds-colors";
 import { useBottomSheet } from "@toss/tds-mobile";
 import { useCallback, useRef } from "react";
 
-interface SyncCodePromptOptions {
-  header: string;
-  confirmButton: string;
+interface UseNicknamePromptReturn {
+  /** 닉네임 입력 바텀시트를 띄운다. 저장 시 입력값, 취소 시 null */
+  promptNickname: (initialValue?: string) => Promise<string | null>;
 }
 
-interface UseSyncCodePromptReturn {
-  /** 8자리 코드 입력 바텀시트를 띄운다 (동기화 코드/친구 코드 공용). 저장 시 입력값, 취소 시 null */
-  promptSyncCode: (options: SyncCodePromptOptions) => Promise<string | null>;
-}
-
-export function useSyncCodePrompt(): UseSyncCodePromptReturn {
+export function useNicknamePrompt(): UseNicknamePromptReturn {
   const bottomSheet = useBottomSheet();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const promptSyncCode = useCallback(
-    async ({ header, confirmButton }: SyncCodePromptOptions): Promise<string | null> => {
+  const promptNickname = useCallback(
+    async (initialValue = ""): Promise<string | null> => {
       const action = await bottomSheet.openTwoButtonSheet({
-        header,
+        header: "닉네임 설정하기",
         children: (
           <div style={{ padding: "0 24px 24px" }}>
             <input
               ref={inputRef}
-              placeholder="상대방에게 받은 8자리 코드"
-              maxLength={8}
+              defaultValue={initialValue}
+              placeholder="랭킹에 표시될 닉네임 (1~20자)"
+              maxLength={20}
               style={{
                 width: "100%",
                 boxSizing: "border-box",
@@ -33,13 +29,12 @@ export function useSyncCodePrompt(): UseSyncCodePromptReturn {
                 borderRadius: "12px",
                 padding: "12px",
                 fontSize: "15px",
-                textTransform: "uppercase",
               }}
             />
           </div>
         ),
         leftButton: "취소",
-        rightButton: confirmButton,
+        rightButton: "저장",
       });
 
       if (action !== "rightButtonClick") {
@@ -51,5 +46,5 @@ export function useSyncCodePrompt(): UseSyncCodePromptReturn {
     [bottomSheet],
   );
 
-  return { promptSyncCode };
+  return { promptNickname };
 }

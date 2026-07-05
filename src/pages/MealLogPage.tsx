@@ -122,7 +122,10 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   }, [dialog, syncCode]);
 
   const handleLinkDevice = useCallback(async () => {
-    const code = await promptSyncCode();
+    const code = await promptSyncCode({
+      header: "다른 기기 연결하기",
+      confirmButton: "연결",
+    });
     if (!code) {
       return;
     }
