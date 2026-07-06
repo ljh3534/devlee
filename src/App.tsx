@@ -240,7 +240,7 @@ function App() {
           display: "flex",
           flexDirection: "column",
           gap: "12px",
-          padding: "24px 24px 0",
+          padding: "24px 24px 40px",
         }}
       >
         <HomeCtaCard
@@ -256,15 +256,6 @@ function App() {
           title="랭킹 · 친구"
           subtitle="다른 사람들과 기록량을 비교해보세요"
           onClick={() => setPage("leaderboard")}
-        />
-      </div>
-
-      <div style={{ textAlign: "center", padding: "40px 0" }}>
-        <Asset.Image
-          alt="apps in toss logo"
-          frameShape={{ width: 120 }}
-          backgroundColor="transparent"
-          src={`${import.meta.env.BASE_URL}appsintoss-logo.png`}
         />
       </div>
     </div>
