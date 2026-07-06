@@ -33,6 +33,11 @@ function formatTime(timestamp: number) {
   });
 }
 
+function extractCalorie(comment: string): string | null {
+  const match = comment.match(/(\d+)\s*kcal/i);
+  return match ? `${match[1]}kcal` : null;
+}
+
 interface MealLogPageProps {
   onBack: () => void;
 }
@@ -275,55 +280,91 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
 
       {entries.length > 0 && (
         <List>
-          {entries.map((entry) => (
-            <ListRow
-              key={entry.id}
-              verticalPadding="large"
-              left={
-                <ListRow.AssetImage
-                  src={entry.photoDataUri}
-                  shape="square"
-                  size="small"
-                />
-              }
-              contents={
-                <ListRow.Texts
-                  type="2RowTypeA"
-                  top={entry.comment}
-                  topProps={{ color: colors.grey800, fontWeight: "bold" }}
-                  bottom={formatTime(entry.createdAt)}
-                  bottomProps={{ color: colors.grey600 }}
-                />
-              }
-              right={
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <TextButton
+          {entries.map((entry) => {
+            const calorie = extractCalorie(entry.comment);
+
+            return (
+              <ListRow
+                key={entry.id}
+                verticalPadding="large"
+                left={
+                  <ListRow.AssetImage
+                    src={entry.photoDataUri}
+                    shape="square"
                     size="small"
-                    color={colors.grey600}
-                    onClick={() => handleEdit(entry.id, entry.comment)}
-                  >
-                    수정
-                  </TextButton>
-                  <div
-                    style={{ width: "1px", height: "12px", backgroundColor: colors.grey200 }}
                   />
-                  <TextButton
-                    size="small"
-                    color={colors.red500}
-                    onClick={() => handleDelete(entry.id)}
+                }
+                contents={
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        color: colors.grey800,
+                        fontWeight: "bold",
+                        fontSize: "15px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {entry.comment}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {calorie && (
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            color: colors.orange600,
+                            backgroundColor: colors.orange50,
+                            padding: "2px 8px",
+                            borderRadius: "999px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {calorie}
+                        </span>
+                      )}
+                      <span style={{ fontSize: "12px", color: colors.grey600 }}>
+                        {formatTime(entry.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+                }
+                right={
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-end",
+                      gap: "6px",
+                    }}
                   >
-                    삭제
-                  </TextButton>
-                </div>
-              }
-            />
-          ))}
+                    <TextButton
+                      size="small"
+                      color={colors.grey600}
+                      onClick={() => handleEdit(entry.id, entry.comment)}
+                    >
+                      수정
+                    </TextButton>
+                    <TextButton
+                      size="small"
+                      color={colors.red500}
+                      onClick={() => handleDelete(entry.id)}
+                    >
+                      삭제
+                    </TextButton>
+                  </div>
+                }
+              />
+            );
+          })}
         </List>
       )}
 
