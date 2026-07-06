@@ -38,6 +38,10 @@ function extractCalorie(comment: string): string | null {
   return match ? `${match[1]}kcal` : null;
 }
 
+function truncateComment(comment: string, maxLength = 24): string {
+  return comment.length > maxLength ? `${comment.slice(0, maxLength)}…` : comment;
+}
+
 function usePressScale(scale = 0.98) {
   const [pressed, setPressed] = useState(false);
   return {
@@ -327,11 +331,9 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                         fontWeight: "bold",
                         fontSize: "15px",
                         whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
                       }}
                     >
-                      {entry.comment}
+                      {truncateComment(entry.comment)}
                     </div>
                     <div
                       style={{
