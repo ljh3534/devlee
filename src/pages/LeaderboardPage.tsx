@@ -1,5 +1,5 @@
 import { colors } from "@toss/tds-colors";
-import { TextButton, Top, useToast } from "@toss/tds-mobile";
+import { Top, useToast } from "@toss/tds-mobile";
 import { useCallback } from "react";
 
 import { useDeviceAuth } from "../hooks/useDeviceAuth";
@@ -127,7 +127,10 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
 
   return (
     <>
-      <Top title={<Top.TitleParagraph size={22}>랭킹</Top.TitleParagraph>} />
+      <Top
+        title={<Top.TitleParagraph size={22}>랭킹</Top.TitleParagraph>}
+        right={<Top.RightButton onClick={onBack}>홈으로</Top.RightButton>}
+      />
 
       <div
         style={{
@@ -229,15 +232,6 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
           <span style={{ color: colors.grey600 }}>아직 추가한 친구가 없어요.</span>
         </div>
       )}
-
-      <TextButton
-        style={{ padding: "16px 24px" }}
-        size="medium"
-        color={colors.blue500}
-        onClick={onBack}
-      >
-        ← 홈으로
-      </TextButton>
     </>
   );
 }

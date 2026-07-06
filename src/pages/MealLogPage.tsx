@@ -141,7 +141,10 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
 
   return (
     <>
-      <Top title={<Top.TitleParagraph size={22}>식단 기록</Top.TitleParagraph>} />
+      <Top
+        title={<Top.TitleParagraph size={22}>식단 기록</Top.TitleParagraph>}
+        right={<Top.RightButton onClick={onBack}>홈으로</Top.RightButton>}
+      />
 
       <div
         style={{
@@ -383,15 +386,6 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
           다른 기기 연결하기
         </TextButton>
       </div>
-
-      <TextButton
-        style={{ padding: "16px 24px" }}
-        size="medium"
-        color={colors.blue500}
-        onClick={onBack}
-      >
-        ← 홈으로
-      </TextButton>
     </>
   );
 }
