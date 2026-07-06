@@ -36,14 +36,33 @@ function StatCard({ label, value }: StatCardProps) {
   );
 }
 
+function CameraIcon({ color }: { color: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+      <circle cx="12" cy="13" r="4" />
+    </svg>
+  );
+}
+
+function TrophyIcon({ color }: { color: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z" />
+      <path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4" />
+    </svg>
+  );
+}
+
 interface HomeCtaCardProps {
+  icon: React.ReactNode;
   title: string;
   subtitle: string;
   variant: "primary" | "secondary";
   onClick: () => void;
 }
 
-function HomeCtaCard({ title, subtitle, variant, onClick }: HomeCtaCardProps) {
+function HomeCtaCard({ icon, title, subtitle, variant, onClick }: HomeCtaCardProps) {
   const isPrimary = variant === "primary";
 
   return (
@@ -52,7 +71,7 @@ function HomeCtaCard({ title, subtitle, variant, onClick }: HomeCtaCardProps) {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        gap: "14px",
         padding: "18px 20px",
         borderRadius: "16px",
         backgroundColor: isPrimary ? colors.orange500 : colors.white,
@@ -60,7 +79,21 @@ function HomeCtaCard({ title, subtitle, variant, onClick }: HomeCtaCardProps) {
         cursor: "pointer",
       }}
     >
-      <div>
+      <div
+        style={{
+          width: "40px",
+          height: "40px",
+          borderRadius: "999px",
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: isPrimary ? "rgba(255, 255, 255, 0.25)" : colors.orange100,
+        }}
+      >
+        {icon}
+      </div>
+      <div style={{ flex: 1 }}>
         <div
           style={{
             fontSize: "16px",
@@ -174,12 +207,14 @@ function App() {
       >
         <HomeCtaCard
           variant="primary"
+          icon={<CameraIcon color={colors.white} />}
           title="오늘 뭐 먹었는지 기록하기"
           subtitle="사진 찍고 30초 만에 기록 끝"
           onClick={() => setPage("meal")}
         />
         <HomeCtaCard
           variant="secondary"
+          icon={<TrophyIcon color={colors.orange500} />}
           title="랭킹 · 친구"
           subtitle="다른 사람들과 기록량을 비교해보세요"
           onClick={() => setPage("leaderboard")}
