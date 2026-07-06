@@ -1,5 +1,5 @@
 import { colors } from "@toss/tds-colors";
-import { Button, List, ListRow, TextButton, Top, useToast } from "@toss/tds-mobile";
+import { TextButton, Top, useToast } from "@toss/tds-mobile";
 import { useCallback } from "react";
 
 import { useDeviceAuth } from "../hooks/useDeviceAuth";
@@ -8,6 +8,81 @@ import { useLeaderboard } from "../hooks/useLeaderboard";
 import { useNickname } from "../hooks/useNickname";
 import { useNicknamePrompt } from "../hooks/useNicknamePrompt";
 import { useSyncCodePrompt } from "../hooks/useSyncCodePrompt";
+
+const RANK_BADGE_COLORS = ["#FBE39B", colors.grey200, "#F3C892"];
+
+function RankBadge({ rank }: { rank: number }) {
+  const backgroundColor = RANK_BADGE_COLORS[rank - 1] ?? colors.grey100;
+
+  return (
+    <div
+      style={{
+        width: "28px",
+        height: "28px",
+        borderRadius: "999px",
+        backgroundColor,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "13px",
+        fontWeight: "bold",
+        color: colors.grey800,
+        flexShrink: 0,
+      }}
+    >
+      {rank}
+    </div>
+  );
+}
+
+function InitialAvatar({ text }: { text: string }) {
+  return (
+    <div
+      style={{
+        width: "28px",
+        height: "28px",
+        borderRadius: "999px",
+        backgroundColor: colors.orange100,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "12px",
+        fontWeight: "bold",
+        color: colors.orange700,
+        flexShrink: 0,
+      }}
+    >
+      {text.slice(0, 1)}
+    </div>
+  );
+}
+
+interface RankCardProps {
+  left: React.ReactNode;
+  name: string;
+  count: number;
+}
+
+function RankCard({ left, name, count }: RankCardProps) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: "14px 16px",
+        borderRadius: "14px",
+        backgroundColor: colors.white,
+        border: `1px solid ${colors.grey200}`,
+        marginBottom: "8px",
+      }}
+    >
+      {left}
+      <span style={{ flex: 1, fontSize: "15px", color: colors.grey900 }}>{name}</span>
+      <span style={{ fontSize: "14px", color: colors.grey600 }}>{count}개</span>
+    </div>
+  );
+}
 
 interface LeaderboardPageProps {
   onBack: () => void;
@@ -52,108 +127,108 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
 
   return (
     <>
-      <Top
-        title={<Top.TitleParagraph size={22}>랭킹</Top.TitleParagraph>}
-        subtitleBottom={
-          <Top.SubtitleParagraph size={17}>
-            닉네임을 설정하면 다른 사람들과 기록량을 비교할 수 있어요.
-          </Top.SubtitleParagraph>
-        }
-      />
+      <Top title={<Top.TitleParagraph size={22}>랭킹</Top.TitleParagraph>} />
 
       <div
         style={{
-          margin: "0 24px 16px",
-          padding: "16px",
-          borderRadius: "12px",
-          backgroundColor: colors.grey100,
-          textAlign: "center",
+          margin: "0 24px 20px",
+          padding: "18px",
+          borderRadius: "16px",
+          backgroundColor: colors.grey900,
         }}
       >
         {myRank && (
-          <div style={{ fontSize: "15px", color: colors.grey800, marginBottom: "8px" }}>
+          <div style={{ color: colors.white, fontSize: "14px", lineHeight: 1.5, marginBottom: "12px" }}>
             {nickname
               ? `내 순위: ${myRank.rank}위 (기록 ${myRank.mealCount}개)`
               : `닉네임을 설정하면 랭킹에 참여할 수 있어요 (현재 기록 ${myRank.mealCount}개)`}
           </div>
         )}
-        <Button size="small" variant="weak" color="dark" onClick={handleSetNickname}>
+        <div
+          onClick={handleSetNickname}
+          style={{
+            display: "inline-block",
+            padding: "8px 16px",
+            borderRadius: "999px",
+            backgroundColor: colors.orange500,
+            color: colors.white,
+            fontSize: "13px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
           {nickname ? "닉네임 변경하기" : "닉네임 설정하기"}
-        </Button>
+        </div>
       </div>
 
-      <List>
+      <div style={{ padding: "0 24px 8px" }}>
+        <span style={{ fontSize: "16px", fontWeight: "bold", color: colors.grey900 }}>
+          전체 랭킹
+        </span>
+      </div>
+
+      <div style={{ padding: "0 24px" }}>
         {entries.map((entry, index) => (
-          <ListRow
+          <RankCard
             key={`${entry.nickname}-${index}`}
-            verticalPadding="medium"
-            left={
-              <div style={{ width: "24px", textAlign: "center", fontWeight: "bold" }}>
-                {index + 1}
-              </div>
-            }
-            contents={
-              <ListRow.Texts
-                type="1RowTypeA"
-                top={entry.nickname}
-                topProps={{ color: colors.grey800 }}
-              />
-            }
-            right={
-              <span style={{ color: colors.grey600, fontSize: "14px" }}>
-                {entry.mealCount}개
-              </span>
-            }
+            left={<RankBadge rank={index + 1} />}
+            name={entry.nickname}
+            count={entry.mealCount}
           />
         ))}
-      </List>
+      </div>
 
       {entries.length === 0 && (
-        <div style={{ padding: "24px", textAlign: "center" }}>
+        <div style={{ padding: "0 24px 16px", textAlign: "center" }}>
           <span style={{ color: colors.grey600 }}>
             아직 랭킹에 참여한 사람이 없어요.
           </span>
         </div>
       )}
 
-      <div style={{ padding: "24px 24px 8px" }}>
-        <div style={{ fontSize: "16px", fontWeight: "bold", color: colors.grey800 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "16px 24px 8px",
+        }}
+      >
+        <span style={{ fontSize: "16px", fontWeight: "bold", color: colors.grey900 }}>
           친구
+        </span>
+        <div
+          onClick={handleAddFriend}
+          style={{
+            padding: "6px 14px",
+            borderRadius: "999px",
+            backgroundColor: colors.orange100,
+            color: colors.orange700,
+            fontSize: "13px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          + 친구 추가
         </div>
       </div>
 
-      <List>
+      <div style={{ padding: "0 24px" }}>
         {friends.map((friend, index) => (
-          <ListRow
+          <RankCard
             key={`${friend.nickname}-${index}`}
-            verticalPadding="medium"
-            contents={
-              <ListRow.Texts
-                type="1RowTypeA"
-                top={friend.nickname ?? "닉네임 미설정"}
-                topProps={{ color: colors.grey800 }}
-              />
-            }
-            right={
-              <span style={{ color: colors.grey600, fontSize: "14px" }}>
-                {friend.mealCount}개
-              </span>
-            }
+            left={<InitialAvatar text={friend.nickname ?? "?"} />}
+            name={friend.nickname ?? "닉네임 미설정"}
+            count={friend.mealCount}
           />
         ))}
-      </List>
+      </div>
 
       {friends.length === 0 && (
-        <div style={{ padding: "8px 24px 24px", textAlign: "center" }}>
+        <div style={{ padding: "0 24px 16px", textAlign: "center" }}>
           <span style={{ color: colors.grey600 }}>아직 추가한 친구가 없어요.</span>
         </div>
       )}
-
-      <div style={{ padding: "0 24px 16px" }}>
-        <Button size="small" variant="weak" color="dark" onClick={handleAddFriend}>
-          친구 추가하기
-        </Button>
-      </div>
 
       <TextButton
         style={{ padding: "16px 24px" }}
