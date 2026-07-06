@@ -1,14 +1,5 @@
 import { colors } from "@toss/tds-colors";
-import {
-  Asset,
-  Button,
-  List,
-  ListRow,
-  TextButton,
-  Top,
-  useDialog,
-  useToast,
-} from "@toss/tds-mobile";
+import { Asset, Button, List, ListRow, TextButton, Top, useDialog, useToast } from "@toss/tds-mobile";
 import { useCallback } from "react";
 
 import { useDeviceAuth } from "../hooks/useDeviceAuth";
@@ -55,7 +46,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   const { promptSyncCode } = useSyncCodePrompt();
   const { mission, toggleComplete } = useMealMission();
   const streak = useMealStreak(entries);
-  const { stage } = useMealGrowth(entries.length);
+  const { stage, nextStage, progress } = useMealGrowth(entries.length);
   const dialog = useDialog();
   const toast = useToast();
 
@@ -145,34 +136,54 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
 
   return (
     <>
-      <Top
-        title={<Top.TitleParagraph size={22}>오늘 뭐 먹었나요?</Top.TitleParagraph>}
-        subtitleBottom={
-          <Top.SubtitleParagraph size={17}>
-            사진으로 가볍게 식단을 기록해보세요.
-          </Top.SubtitleParagraph>
-        }
-      />
+      <Top title={<Top.TitleParagraph size={22}>식단 기록</Top.TitleParagraph>} />
 
-      <div style={{ padding: "0 24px 16px", textAlign: "center" }}>
-        <Asset.Image
-          alt={`성장 단계 Lv.${stage.level} ${stage.label}`}
-          frameShape={{ width: 120 }}
-          backgroundColor="transparent"
-          src={`${import.meta.env.BASE_URL}${stage.image}`}
-        />
-        <div
-          style={{
-            fontSize: "16px",
-            fontWeight: "bold",
-            color: colors.grey800,
-            marginTop: "8px",
-          }}
-        >
-          Lv.{stage.level} {stage.label}
+      <div
+        style={{
+          margin: "0 24px 16px",
+          padding: "16px",
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #FFF3E4 0%, #FDE0BE 100%)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Asset.Image
+            alt={`Lv.${stage.level} ${stage.label}`}
+            frameShape={{ width: 48 }}
+            backgroundColor="transparent"
+            src={`${import.meta.env.BASE_URL}${stage.image}`}
+          />
+          <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: "15px", fontWeight: "bold", color: colors.grey900 }}>
+              Lv.{stage.level} {stage.label}
+            </span>
+            <span style={{ fontSize: "13px", fontWeight: "bold", color: colors.orange600 }}>
+              연속 {streak}일
+            </span>
+          </div>
         </div>
-        <div style={{ fontSize: "13px", color: colors.grey600, marginTop: "2px" }}>
-          연속 기록 {streak}일
+
+        <div style={{ marginTop: "14px" }}>
+          <div
+            style={{
+              height: "6px",
+              borderRadius: "999px",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${Math.round(progress * 100)}%`,
+                borderRadius: "999px",
+                backgroundColor: colors.orange500,
+              }}
+            />
+          </div>
+          <div style={{ fontSize: "12px", color: colors.grey700, marginTop: "6px" }}>
+            {nextStage ? `다음 단계까지 ${Math.round(progress * 100)}%` : "최고 단계예요!"}
+          </div>
         </div>
       </div>
 
@@ -181,17 +192,18 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
           style={{
             margin: "0 24px 16px",
             padding: "16px",
-            borderRadius: "12px",
-            border: `1px solid ${colors.grey200}`,
+            borderRadius: "16px",
+            backgroundColor: colors.grey100,
           }}
         >
-          <div style={{ fontSize: "13px", color: colors.grey600, marginBottom: "4px" }}>
+          <div style={{ fontSize: "12px", fontWeight: "bold", color: colors.orange600, marginBottom: "6px" }}>
             오늘의 미션
           </div>
           <div
             style={{
               fontSize: "15px",
-              color: colors.grey800,
+              fontWeight: "bold",
+              color: colors.grey900,
               marginBottom: "12px",
               textDecoration: mission.completed ? "line-through" : "none",
             }}
@@ -210,24 +222,47 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
       )}
 
       <div style={{ display: "flex", gap: "8px", padding: "0 24px 16px" }}>
-        <Button
-          color="dark"
-          variant="fill"
-          loading={isCapturing}
-          onClick={handleCapture}
-          style={{ flex: 1 }}
+        <div
+          onClick={isCapturing ? undefined : handleCapture}
+          style={{
+            flex: 1,
+            textAlign: "center",
+            padding: "16px 8px",
+            borderRadius: "16px",
+            backgroundColor: colors.orange500,
+            color: colors.white,
+            fontWeight: "bold",
+            fontSize: "15px",
+            cursor: isCapturing ? "default" : "pointer",
+            opacity: isCapturing ? 0.6 : 1,
+          }}
         >
-          사진 찍기
-        </Button>
-        <Button
-          color="dark"
-          variant="weak"
-          loading={isCapturing}
-          onClick={handleAlbumPick}
-          style={{ flex: 1 }}
+          {isCapturing ? "처리 중..." : "사진으로 기록"}
+        </div>
+        <div
+          onClick={isCapturing ? undefined : handleAlbumPick}
+          style={{
+            flex: 1,
+            textAlign: "center",
+            padding: "16px 8px",
+            borderRadius: "16px",
+            backgroundColor: colors.white,
+            border: `1px solid ${colors.grey200}`,
+            color: colors.grey800,
+            fontWeight: "bold",
+            fontSize: "15px",
+            cursor: isCapturing ? "default" : "pointer",
+            opacity: isCapturing ? 0.6 : 1,
+          }}
         >
           앨범에서 선택
-        </Button>
+        </div>
+      </div>
+
+      <div style={{ padding: "0 24px 8px" }}>
+        <span style={{ fontSize: "16px", fontWeight: "bold", color: colors.grey900 }}>
+          기록한 한 끼 · {entries.length}개
+        </span>
       </div>
 
       {!isLoading && entries.length === 0 && (
