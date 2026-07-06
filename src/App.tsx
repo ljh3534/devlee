@@ -169,12 +169,14 @@ function App() {
       </div>
 
       <div style={{ textAlign: "center", padding: "24px 24px 0" }}>
-        <Asset.Image
-          alt={`Lv.${stage.level} ${stage.label}`}
-          frameShape={{ width: 140 }}
-          backgroundColor="transparent"
-          src={`${import.meta.env.BASE_URL}${stage.image}`}
-        />
+        <div>
+          <Asset.Image
+            alt={`Lv.${stage.level} ${stage.label}`}
+            frameShape={{ width: 140 }}
+            backgroundColor="transparent"
+            src={`${import.meta.env.BASE_URL}${stage.image}`}
+          />
+        </div>
         <div
           style={{
             display: "inline-block",
