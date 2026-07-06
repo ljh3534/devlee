@@ -1,6 +1,6 @@
 import { colors } from "@toss/tds-colors";
 import { Top, useToast } from "@toss/tds-mobile";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { useDeviceAuth } from "../hooks/useDeviceAuth";
 import { useFriends } from "../hooks/useFriends";
@@ -10,6 +10,21 @@ import { useNicknamePrompt } from "../hooks/useNicknamePrompt";
 import { useSyncCodePrompt } from "../hooks/useSyncCodePrompt";
 
 const RANK_BADGE_COLORS = ["#FBE39B", colors.grey200, "#F3C892"];
+
+function usePressScale(scale = 0.98) {
+  const [pressed, setPressed] = useState(false);
+  return {
+    pressStyle: {
+      transform: pressed ? `scale(${scale})` : "scale(1)",
+      transition: "transform 0.15s ease",
+    },
+    pressHandlers: {
+      onPointerDown: () => setPressed(true),
+      onPointerUp: () => setPressed(false),
+      onPointerLeave: () => setPressed(false),
+    },
+  };
+}
 
 function RankBadge({ rank }: { rank: number }) {
   const backgroundColor = RANK_BADGE_COLORS[rank - 1] ?? colors.grey100;
@@ -96,6 +111,8 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
   const { promptNickname } = useNicknamePrompt();
   const { promptSyncCode } = useSyncCodePrompt();
   const toast = useToast();
+  const nicknamePress = usePressScale(0.97);
+  const friendAddPress = usePressScale(0.97);
 
   const handleSetNickname = useCallback(async () => {
     const name = await promptNickname(nickname ?? "");
@@ -149,6 +166,7 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
         )}
         <div
           onClick={handleSetNickname}
+          {...nicknamePress.pressHandlers}
           style={{
             display: "inline-block",
             padding: "8px 16px",
@@ -158,6 +176,7 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
             fontSize: "13px",
             fontWeight: "bold",
             cursor: "pointer",
+            ...nicknamePress.pressStyle,
           }}
         >
           {nickname ? "닉네임 변경하기" : "닉네임 설정하기"}
@@ -202,6 +221,7 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
         </span>
         <div
           onClick={handleAddFriend}
+          {...friendAddPress.pressHandlers}
           style={{
             padding: "6px 14px",
             borderRadius: "999px",
@@ -210,6 +230,7 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
             fontSize: "13px",
             fontWeight: "bold",
             cursor: "pointer",
+            ...friendAddPress.pressStyle,
           }}
         >
           + 친구 추가

@@ -1,6 +1,6 @@
 import { colors } from "@toss/tds-colors";
 import { Asset, Button, List, ListRow, TextButton, Top, useDialog, useToast } from "@toss/tds-mobile";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { useDeviceAuth } from "../hooks/useDeviceAuth";
 import { useMealAnalysis } from "../hooks/useMealAnalysis";
@@ -38,6 +38,21 @@ function extractCalorie(comment: string): string | null {
   return match ? `${match[1]}kcal` : null;
 }
 
+function usePressScale(scale = 0.98) {
+  const [pressed, setPressed] = useState(false);
+  return {
+    pressStyle: {
+      transform: pressed ? `scale(${scale})` : "scale(1)",
+      transition: "transform 0.15s ease",
+    },
+    pressHandlers: {
+      onPointerDown: () => setPressed(true),
+      onPointerUp: () => setPressed(false),
+      onPointerLeave: () => setPressed(false),
+    },
+  };
+}
+
 interface MealLogPageProps {
   onBack: () => void;
 }
@@ -54,6 +69,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   const { stage, nextStage, progress } = useMealGrowth(entries.length);
   const dialog = useDialog();
   const toast = useToast();
+  const capturePress = usePressScale(0.98);
+  const albumPress = usePressScale(0.98);
 
   const saveNewEntry = useCallback(
     async (photo: { dataUri: string } | null) => {
@@ -185,7 +202,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                 height: "100%",
                 width: `${Math.round(progress * 100)}%`,
                 borderRadius: "999px",
-                backgroundColor: colors.orange500,
+                background: "linear-gradient(90deg, #FD9B3C, #F2762A)",
               }}
             />
           </div>
@@ -232,23 +249,27 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
       <div style={{ display: "flex", gap: "8px", padding: "0 24px 16px" }}>
         <div
           onClick={isCapturing ? undefined : handleCapture}
+          {...capturePress.pressHandlers}
           style={{
             flex: 1,
             textAlign: "center",
             padding: "16px 8px",
             borderRadius: "16px",
-            backgroundColor: colors.orange500,
+            background: "linear-gradient(135deg, #FD9B3C, #F2762A)",
+            boxShadow: "0 8px 18px rgba(242,118,42,0.3)",
             color: colors.white,
             fontWeight: "bold",
             fontSize: "15px",
             cursor: isCapturing ? "default" : "pointer",
             opacity: isCapturing ? 0.6 : 1,
+            ...capturePress.pressStyle,
           }}
         >
           {isCapturing ? "처리 중..." : "사진으로 기록"}
         </div>
         <div
           onClick={isCapturing ? undefined : handleAlbumPick}
+          {...albumPress.pressHandlers}
           style={{
             flex: 1,
             textAlign: "center",
@@ -260,6 +281,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
             fontWeight: "bold",
             fontSize: "15px",
             cursor: isCapturing ? "default" : "pointer",
+            ...albumPress.pressStyle,
             opacity: isCapturing ? 0.6 : 1,
           }}
         >

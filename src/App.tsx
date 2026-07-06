@@ -9,6 +9,21 @@ import { LeaderboardPage } from "./pages/LeaderboardPage";
 import { MealLogPage } from "./pages/MealLogPage";
 import { useState } from "react";
 
+function usePressScale(scale = 0.98) {
+  const [pressed, setPressed] = useState(false);
+  return {
+    pressStyle: {
+      transform: pressed ? `scale(${scale})` : "scale(1)",
+      transition: "transform 0.15s ease",
+    },
+    pressHandlers: {
+      onPointerDown: () => setPressed(true),
+      onPointerUp: () => setPressed(false),
+      onPointerLeave: () => setPressed(false),
+    },
+  };
+}
+
 interface StatCardProps {
   label: string;
   value: string;
@@ -23,6 +38,7 @@ function StatCard({ label, value }: StatCardProps) {
         borderRadius: "16px",
         backgroundColor: colors.white,
         border: `1px solid ${colors.grey200}`,
+        boxShadow: "0 2px 10px rgba(25,31,40,0.05)",
         textAlign: "center",
       }}
     >
@@ -64,19 +80,23 @@ interface HomeCtaCardProps {
 
 function HomeCtaCard({ icon, title, subtitle, variant, onClick }: HomeCtaCardProps) {
   const isPrimary = variant === "primary";
+  const { pressStyle, pressHandlers } = usePressScale(0.98);
 
   return (
     <div
       onClick={onClick}
+      {...pressHandlers}
       style={{
         display: "flex",
         alignItems: "center",
         gap: "14px",
         padding: "18px 20px",
         borderRadius: "16px",
-        backgroundColor: isPrimary ? colors.orange500 : colors.white,
+        background: isPrimary ? "linear-gradient(135deg, #FD9B3C, #F2762A)" : colors.white,
         border: isPrimary ? "none" : `1px solid ${colors.grey200}`,
+        boxShadow: isPrimary ? "0 12px 26px rgba(242,118,42,0.35)" : undefined,
         cursor: "pointer",
+        ...pressStyle,
       }}
     >
       <div
@@ -169,13 +189,29 @@ function App() {
       </div>
 
       <div style={{ textAlign: "center", padding: "24px 24px 0" }}>
-        <div>
-          <Asset.Image
-            alt={`Lv.${stage.level} ${stage.label}`}
-            frameShape={{ width: 140 }}
-            backgroundColor="transparent"
-            src={`${import.meta.env.BASE_URL}${stage.image}`}
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "180px",
+              height: "180px",
+              borderRadius: "50%",
+              background:
+                "radial-gradient(closest-side, rgba(253,155,60,0.30), rgba(253,155,60,0) 72%)",
+              zIndex: 0,
+            }}
           />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <Asset.Image
+              alt={`Lv.${stage.level} ${stage.label}`}
+              frameShape={{ width: 140 }}
+              backgroundColor="transparent"
+              src={`${import.meta.env.BASE_URL}${stage.image}`}
+            />
+          </div>
         </div>
         <div
           style={{
