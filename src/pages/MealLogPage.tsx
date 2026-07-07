@@ -172,7 +172,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
           margin: "0 24px 16px",
           padding: "16px",
           borderRadius: "16px",
-          background: "linear-gradient(135deg, #FFF3E4 0%, #FDE0BE 100%)",
+          background: "linear-gradient(135deg, #E8F1FF 0%, #D6E7FF 100%)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -186,7 +186,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
             <span style={{ fontSize: "15px", fontWeight: "bold", color: colors.grey900 }}>
               Lv.{stage.level} {stage.label}
             </span>
-            <span style={{ fontSize: "13px", fontWeight: "bold", color: colors.orange600 }}>
+            <span style={{ fontSize: "13px", fontWeight: "bold", color: colors.blue600 }}>
               연속 {streak}일
             </span>
           </div>
@@ -206,7 +206,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                 height: "100%",
                 width: `${Math.round(progress * 100)}%`,
                 borderRadius: "999px",
-                background: "linear-gradient(90deg, #FD9B3C, #F2762A)",
+                background: "linear-gradient(90deg, #3B82F6, #1D4ED8)",
               }}
             />
           </div>
@@ -225,7 +225,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
             backgroundColor: colors.grey100,
           }}
         >
-          <div style={{ fontSize: "12px", fontWeight: "bold", color: colors.orange600, marginBottom: "6px" }}>
+          <div style={{ fontSize: "12px", fontWeight: "bold", color: colors.blue600, marginBottom: "6px" }}>
             오늘의 미션
           </div>
           <div
@@ -259,8 +259,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
             textAlign: "center",
             padding: "16px 8px",
             borderRadius: "16px",
-            background: "linear-gradient(135deg, #FD9B3C, #F2762A)",
-            boxShadow: "0 8px 18px rgba(242,118,42,0.3)",
+            background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+            boxShadow: "0 8px 18px rgba(29,78,216,0.3)",
             color: colors.white,
             fontWeight: "bold",
             fontSize: "15px",
@@ -348,8 +348,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                           style={{
                             fontSize: "12px",
                             fontWeight: "bold",
-                            color: colors.orange600,
-                            backgroundColor: colors.orange50,
+                            color: colors.blue600,
+                            backgroundColor: colors.blue50,
                             padding: "2px 8px",
                             borderRadius: "999px",
                             flexShrink: 0,

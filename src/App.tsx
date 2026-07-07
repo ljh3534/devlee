@@ -92,9 +92,9 @@ function HomeCtaCard({ icon, title, subtitle, variant, onClick }: HomeCtaCardPro
         gap: "14px",
         padding: "18px 20px",
         borderRadius: "16px",
-        background: isPrimary ? "linear-gradient(135deg, #FD9B3C, #F2762A)" : colors.white,
+        background: isPrimary ? "linear-gradient(135deg, #3B82F6, #1D4ED8)" : colors.white,
         border: isPrimary ? "none" : `1px solid ${colors.grey200}`,
-        boxShadow: isPrimary ? "0 12px 26px rgba(242,118,42,0.35)" : undefined,
+        boxShadow: isPrimary ? "0 12px 26px rgba(29,78,216,0.35)" : undefined,
         cursor: "pointer",
         ...pressStyle,
       }}
@@ -108,7 +108,7 @@ function HomeCtaCard({ icon, title, subtitle, variant, onClick }: HomeCtaCardPro
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: isPrimary ? "rgba(255, 255, 255, 0.25)" : colors.orange100,
+          backgroundColor: isPrimary ? "rgba(255, 255, 255, 0.25)" : colors.blue100,
         }}
       >
         {icon}
@@ -155,7 +155,7 @@ function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(180deg, #FDEBD8 0%, #FFFFFF 45%)",
+        background: "linear-gradient(180deg, #DCEAFF 0%, #FFFFFF 45%)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "24px 24px 0" }}>
@@ -200,7 +200,7 @@ function App() {
               height: "180px",
               borderRadius: "50%",
               background:
-                "radial-gradient(closest-side, rgba(253,155,60,0.30), rgba(253,155,60,0) 72%)",
+                "radial-gradient(closest-side, rgba(59,130,246,0.28), rgba(59,130,246,0) 72%)",
               zIndex: 0,
             }}
           />
@@ -222,7 +222,7 @@ function App() {
             backgroundColor: colors.white,
             fontSize: "13px",
             fontWeight: "bold",
-            color: colors.orange500,
+            color: colors.blue500,
           }}
         >
           Lv.{stage.level} {stage.label}
@@ -252,7 +252,7 @@ function App() {
         />
         <HomeCtaCard
           variant="secondary"
-          icon={<TrophyIcon color={colors.orange500} />}
+          icon={<TrophyIcon color={colors.blue500} />}
           title="랭킹 · 친구"
           subtitle="다른 사람들과 기록량을 비교해보세요"
           onClick={() => setPage("leaderboard")}
