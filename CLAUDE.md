@@ -34,7 +34,7 @@
 
 Claude Design 프로토타입 기반으로 디자인 리뉴얼함: 캐릭터+스트릭+진행률 바를 그라데이션 카드 하나로 통합, 촬영/앨범 버튼을 orange 채움/흰색 아웃라인 카드로 스타일링. 사진 기록의 실제 사진 썸네일은 프로토타입의 장식용 색상 원 대신 그대로 유지(실사용 가치가 더 크다고 판단). 홈으로 돌아가기는 화면 하단 화살표 버튼 대신 `Top`의 `right` 슬롯(`Top.RightButton`)에 배치해 제목 옆에 위치시킴(랭킹 화면도 동일). 기록 리스트의 코멘트는 CSS 픽셀 폭 기준 말줄임(ellipsis) 대신 `truncateComment`로 글자 수(24자) 기준으로 직접 잘라서 표시 — AI 분석 코멘트처럼 긴 문구가 기기/폰트에 따라 다르게 잘리는 것을 방지하고 항상 일정한 길이로 보이게 함.
 
-**포인트 컬러 오렌지→블루 전환**: `src/App.tsx`/`src/pages/MealLogPage.tsx`/`src/pages/LeaderboardPage.tsx`의 `colors.orange*` 토큰과 하드코딩된 오렌지 hex를 전부 동일 단계의 `colors.blue*`/블루 계열 hex로 교체함(삭제/에러용 `colors.red*`는 그대로 둠). 단, `granite.config.ts`의 `brand.primaryColor`는 아직 `#FD9B3C`(오렌지)로 남아있음 — 이 값이 TDS `Button`/`Top.RightButton` 등의 기본 "primary" 컬러로 매핑돼서 "홈으로" 버튼 등 일부 네이티브 UI 크롬은 여전히 오렌지로 보임. 앱 전체를 완전히 블루로 통일하려면 이 값도 같이 바꿔야 함.
+**포인트 컬러 오렌지→블루 전환**: `src/App.tsx`/`src/pages/MealLogPage.tsx`/`src/pages/LeaderboardPage.tsx`의 `colors.orange*` 토큰과 하드코딩된 오렌지 hex를 전부 동일 단계의 `colors.blue*`/블루 계열 hex로 교체함(삭제/에러용 `colors.red*`는 그대로 둠). `granite.config.ts`의 `brand.primaryColor`도 `#3B82F6`(블루)로 함께 변경 — 이 값이 TDS `Button`/`Top.RightButton` 등 color prop을 안 넘긴 컴포넌트의 기본 "primary" 컬러로 매핑되기 때문에, 코드에서 색을 직접 지정하지 않는 네이티브 UI 크롬(예: "홈으로" 버튼)까지 블루로 통일하려면 이 값도 같이 바꿔야 했음.
 
 - **사진 기록**: 카메라 촬영 또는 앨범 선택(`useMealPhotoCapture`)으로 식단 사진을 남기고, 메모 입력(`useMealMemoPrompt`, 비워두면 랜덤 코멘트 자동 적용). 기록은 `useMealLog`가 `whatimeat-server`의 `/api/meals`와 동기화됨 (아래 "백엔드" 섹션 참고)
 - **AI 성분분석**(`useMealAnalysis`): 사진 촬영/선택 직후 `whatimeat-server`가 Claude Vision으로 분석한 코멘트(메뉴+대략적 칼로리)를 메모 입력창에 미리 채워줌. 사용자가 그대로 쓰거나 수정 가능, 분석 실패 시 빈 칸(랜덤 코멘트 대체)으로 자연스럽게 폴백
