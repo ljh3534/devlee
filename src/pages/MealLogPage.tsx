@@ -75,6 +75,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   const toast = useToast();
   const capturePress = usePressScale(0.98);
   const albumPress = usePressScale(0.98);
+  const syncCodePress = usePressScale(0.97);
+  const linkDevicePress = usePressScale(0.97);
 
   const saveNewEntry = useCallback(
     async (photo: { dataUri: string } | null) => {
@@ -398,17 +400,46 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
-          gap: "12px",
+          gap: "8px",
           padding: "8px 24px 0",
         }}
       >
-        <TextButton size="small" color={colors.grey600} onClick={handleShowSyncCode}>
+        <div
+          onClick={handleShowSyncCode}
+          {...syncCodePress.pressHandlers}
+          style={{
+            flex: 1,
+            textAlign: "center",
+            padding: "12px 8px",
+            borderRadius: "12px",
+            backgroundColor: colors.blue50,
+            color: colors.blue700,
+            fontWeight: "bold",
+            fontSize: "13px",
+            cursor: "pointer",
+            ...syncCodePress.pressStyle,
+          }}
+        >
           내 동기화 코드 보기
-        </TextButton>
-        <TextButton size="small" color={colors.grey600} onClick={handleLinkDevice}>
+        </div>
+        <div
+          onClick={handleLinkDevice}
+          {...linkDevicePress.pressHandlers}
+          style={{
+            flex: 1,
+            textAlign: "center",
+            padding: "12px 8px",
+            borderRadius: "12px",
+            backgroundColor: colors.blue50,
+            color: colors.blue700,
+            fontWeight: "bold",
+            fontSize: "13px",
+            cursor: "pointer",
+            ...linkDevicePress.pressStyle,
+          }}
+        >
           다른 기기 연결하기
-        </TextButton>
+        </div>
       </div>
     </>
   );
