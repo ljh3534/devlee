@@ -68,8 +68,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
   const { analyzePhoto } = useMealAnalysis(accessToken);
   const { promptMemo } = useMealMemoPrompt();
   const { promptSyncCode } = useSyncCodePrompt();
-  const { mission, toggleComplete } = useMealMission();
   const streak = useMealStreak(entries);
+  const { mission, toggleComplete } = useMealMission(entries, streak);
   const { stage, nextStage, progress } = useMealGrowth(entries.length);
   const dialog = useDialog();
   const toast = useToast();
@@ -241,14 +241,38 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
           >
             {mission.text}
           </div>
-          <Button
-            size="small"
-            variant={mission.completed ? "weak" : "fill"}
-            color="dark"
-            onClick={toggleComplete}
-          >
-            {mission.completed ? "완료 취소하기" : "완료했어요"}
-          </Button>
+          {mission.type === "auto" ? (
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 12px",
+                borderRadius: "999px",
+                backgroundColor: mission.completed ? colors.blue100 : colors.grey200,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  color: mission.completed ? colors.blue700 : colors.grey600,
+                }}
+              >
+                {mission.completed ? "완료" : "진행 중"}
+              </span>
+              <span style={{ fontSize: "12px", color: colors.grey500 }}>· 자동으로 확인돼요</span>
+            </div>
+          ) : (
+            <Button
+              size="small"
+              variant={mission.completed ? "weak" : "fill"}
+              color="dark"
+              onClick={toggleComplete}
+            >
+              {mission.completed ? "완료 취소하기" : "완료했어요"}
+            </Button>
+          )}
         </div>
       )}
 
