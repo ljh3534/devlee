@@ -334,97 +334,96 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
       )}
 
       {entries.length > 0 && (
-        <div style={{ padding: "0 24px" }}>
-          <List>
-            {entries.map((entry) => {
-              const calorie = extractCalorie(entry.comment);
+        <List>
+          {entries.map((entry) => {
+            const calorie = extractCalorie(entry.comment);
 
-              return (
-                <ListRow
-                  key={entry.id}
-                  verticalPadding="large"
-                  left={
-                    <ListRow.AssetImage
-                      src={entry.photoDataUri}
-                      shape="square"
-                      size="small"
-                    />
-                  }
-                  contents={
-                    <div style={{ minWidth: 0, maxWidth: "calc(100vw - 200px)" }}>
-                      <div
-                        style={{
-                          color: colors.grey800,
-                          fontWeight: "bold",
-                          fontSize: "15px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {truncateComment(entry.comment)}
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {calorie && (
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "bold",
-                              color: colors.blue600,
-                              backgroundColor: colors.blue50,
-                              padding: "2px 8px",
-                              borderRadius: "999px",
-                              flexShrink: 0,
-                            }}
-                          >
-                            {calorie}
-                          </span>
-                        )}
-                        <span style={{ fontSize: "12px", color: colors.grey600 }}>
-                          {formatTime(entry.createdAt)}
-                        </span>
-                      </div>
+            return (
+              <ListRow
+                key={entry.id}
+                verticalPadding="large"
+                left={
+                  <ListRow.AssetImage
+                    src={entry.photoDataUri}
+                    shape="square"
+                    size="small"
+                  />
+                }
+                contents={
+                  <div style={{ minWidth: 0, maxWidth: "calc(100vw - 200px)" }}>
+                    <div
+                      style={{
+                        color: colors.grey800,
+                        fontWeight: "bold",
+                        fontSize: "15px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {truncateComment(entry.comment)}
                     </div>
-                  }
-                  right={
                     <div
                       style={{
                         display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-end",
+                        alignItems: "center",
                         gap: "6px",
-                        flexShrink: 0,
-                        minWidth: "40px",
+                        marginTop: "4px",
                       }}
                     >
-                      <TextButton
-                        size="small"
-                        color={colors.grey600}
-                        onClick={() => handleEdit(entry.id, entry.comment)}
-                      >
-                        수정
-                      </TextButton>
-                      <TextButton
-                        size="small"
-                        color={colors.red500}
-                        onClick={() => handleDelete(entry.id)}
-                      >
-                        삭제
-                      </TextButton>
+                      {calorie && (
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            color: colors.blue600,
+                            backgroundColor: colors.blue50,
+                            padding: "2px 8px",
+                            borderRadius: "999px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {calorie}
+                        </span>
+                      )}
+                      <span style={{ fontSize: "12px", color: colors.grey600 }}>
+                        {formatTime(entry.createdAt)}
+                      </span>
                     </div>
-                  }
-                />
-              );
-            })}
-          </List>
-        </div>
+                  </div>
+                }
+                right={
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-end",
+                      gap: "6px",
+                      flexShrink: 0,
+                      minWidth: "40px",
+                      paddingRight: "12px",
+                    }}
+                  >
+                    <TextButton
+                      size="small"
+                      color={colors.grey600}
+                      onClick={() => handleEdit(entry.id, entry.comment)}
+                    >
+                      수정
+                    </TextButton>
+                    <TextButton
+                      size="small"
+                      color={colors.red500}
+                      onClick={() => handleDelete(entry.id)}
+                    >
+                      삭제
+                    </TextButton>
+                  </div>
+                }
+              />
+            );
+          })}
+        </List>
       )}
 
       <div
