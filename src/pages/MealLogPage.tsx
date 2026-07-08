@@ -357,6 +357,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                         fontWeight: "bold",
                         fontSize: "15px",
                         whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
                       {truncateComment(entry.comment)}
@@ -397,6 +399,8 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                       flexDirection: "column",
                       alignItems: "flex-end",
                       gap: "6px",
+                      flexShrink: 0,
+                      minWidth: "40px",
                     }}
                   >
                     <TextButton
