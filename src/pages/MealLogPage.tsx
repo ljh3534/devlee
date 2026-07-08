@@ -350,7 +350,7 @@ export function MealLogPage({ onBack }: MealLogPageProps) {
                   />
                 }
                 contents={
-                  <div style={{ minWidth: 0 }}>
+                  <div style={{ minWidth: 0, maxWidth: "calc(100vw - 160px)" }}>
                     <div
                       style={{
                         color: colors.grey800,
