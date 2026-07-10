@@ -141,8 +141,21 @@ function HomeCtaCard({ icon, title, subtitle, variant, onClick }: HomeCtaCardPro
   );
 }
 
+function getInitialPage(): string | null {
+  const path = window.location.pathname;
+
+  if (path.startsWith("/meal")) {
+    return "meal";
+  }
+  if (path.startsWith("/leaderboard")) {
+    return "leaderboard";
+  }
+
+  return null;
+}
+
 function App() {
-  const [page, setPage] = useState<string | null>(null);
+  const [page, setPage] = useState<string | null>(getInitialPage);
   const { accessToken } = useDeviceAuth();
   const { entries } = useMealLog(accessToken);
   const streak = useMealStreak(entries);
